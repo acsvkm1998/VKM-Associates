@@ -1535,7 +1535,7 @@
     </footer>
 
     <div id="toast" class="toast"></div>
-
+<script src="db.js"></script>
     <script>
         let currentUser = null;
         let isOwner = false;
@@ -1932,5 +1932,39 @@
             }
         });
     </script>
+<script src="db.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', async () => {
+    await VKM.init();
+
+    // Optional: show stored logo in header .logo
+    const logoUrl = await VKM.getLogoUrl();
+    if (logoUrl) {
+      const logoEl = document.querySelector('.logo a');
+      if (logoEl) {
+        logoEl.innerHTML = `<img src="${logoUrl}" alt="VKM Associates" style="height:28px;vertical-align:middle;margin-right:8px;"> VKM ASSOCIATES`;
+      }
+    }
+
+    // Render products into the main grid if present on page
+    const grid = document.querySelector('.product-grid-container .main-content');
+    if (grid) {
+      const products = await VKM.listProducts();
+      grid.innerHTML = '';
+      for (const p of products) {
+        const imgUrl = p.imageMediaId ? await VKM.getMediaUrl(p.imageMediaId) : 'placeholderpen.jpg';
+        const card = document.createElement('div');
+        card.className = 'product-card';
+        card.innerHTML = `
+          <img src="${imgUrl}" alt="${p.name}">
+          <p>${p.name}</p>
+          <div class="price">Rs.${p.price.toFixed(2)}</div>
+          <a href="#" class="cta-button" data-id="${p.id}">Add to Cart</a>
+        `;
+        grid.appendChild(card);
+      }
+    }
+  });
+</script>
 </body>
 </html>
